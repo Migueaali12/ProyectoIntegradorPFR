@@ -22,35 +22,6 @@ object ACtexto extends App {
     genres.map(_._1).toSet, genres.minBy(_._2)._1, genres.minBy(_._2)._2, genres.maxBy(_._2)._1, genres.maxBy(_._2)._2
     ,genres.toList.sortBy(_._2))
 
-  //original_language
-  val original_language = data.flatMap(x => x.get("original_language"))
-    .groupBy {
-      case language => language
-    }.map {
-    case language => (language._1, language._2.size)
-  }
-
-  printf("\nLos codigos de idioma son: %s\n" +
-    "El codigo menos utilizado es: %s con: %s de apariciones\n" +
-    "El codigo mas utilizado es: %s con: %s de apariciones\n" +
-    "%s\n",
-    original_language.map(_._1).toSet, original_language.minBy(_._2)._1, original_language.minBy(_._2)._2,
-    original_language.maxBy(_._2)._1, original_language.maxBy(_._2)._2, original_language.toList.sortBy(_._2))
-
-  //original_title
-  val original_title = data.flatMap(x => x.get("original_title"))
-    .groupBy {
-      case o_title => o_title
-    }.map {
-    case o_title => (o_title._1, o_title._2.size)
-  }
-
-  printf("\nLos titulos son: %s\n" +
-    "El titulo menos utilizado es: %s con: %s de apariciones\n" +
-    "El titulo mas utilizado es: %s con: %s de apariciones\n" ,
-    original_title.map(_._1).toSet, original_title.minBy(_._2)._1, original_title.minBy(_._2)._2,
-    original_title.maxBy(_._2)._1, original_title.maxBy(_._2)._2)
-
   //release_date
   val release_date = data.flatMap(x => x.get("release_date"))
     .groupBy {

@@ -8,5 +8,8 @@ lazy val root = (project in file("."))
   )
 
 libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.10"
-
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.9.3"
+libraryDependencies += "io.github.cibotech" %% "evilplot" % "0.8.1"
+libraryDependencies += "org.scalikejdbc" %% "scalikejdbc" % "4.0.0"
+libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
+libraryDependencies += "com.mysql" % "mysql-connector-j" % "8.0.31"
