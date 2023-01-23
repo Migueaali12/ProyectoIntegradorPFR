@@ -13,3 +13,5 @@ libraryDependencies += "io.github.cibotech" %% "evilplot" % "0.8.1"
 libraryDependencies += "org.scalikejdbc" %% "scalikejdbc" % "4.0.0"
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
 libraryDependencies += "com.mysql" % "mysql-connector-j" % "8.0.31"
+libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0"
+
