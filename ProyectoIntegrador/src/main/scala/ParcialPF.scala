@@ -163,7 +163,7 @@ object ParcialPF extends App {
     .groupBy(identity)
     .map {
       case x => (x._1, x._2.size)
-    }.toList.maxBy(_._2)._1
+    }.toList.maxBy(_._2)._1 //altura más alta
 
   val names = data
     .map(row => (row("tourney_name"), row("players_info")))
@@ -172,13 +172,13 @@ object ParcialPF extends App {
     .distinct
     .map(row => Json.parse(row))
     .flatMap(JsonData => JsonData \\ "name")
-    .map(jsValue => jsValue.as[String])
+    .map(jsValue => jsValue.as[String]) //nombres de jugadores más altos
 
   val tourneys_name = data
     .map(row => (row("tourney_name"), row("players_info")))
     .filter(_._2.contains(max_height.toString))
     .map(x => x._1)
-    .distinct
+    .distinct //lista de nombres de torneos
 
   val ages = data
     .map(row => (row("tourney_name"), row("players_info")))
@@ -188,6 +188,7 @@ object ParcialPF extends App {
     .map(row => Json.parse(row))
     .flatMap(JsonData => JsonData \\ "age")
     .map(jsValue => jsValue.asOpt[Int].getOrElse(0))
+    .filter(_ != 0) //separar los valores nulos
 
   val players_Height = names.zip(ages).zip(tourneys_name).map {
     case ((names, ages), tourtney_name) => (names, ages, tourtney_name)
