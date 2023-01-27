@@ -78,10 +78,10 @@ object ParcialPF extends App {
   val prombest = best_of.sum.toDouble / best_of.size
   val maxbest = best_of.max
 
-  printf("\nEl promedio de height es: %s\n" +
-    "El valor minimo de height contando 0 es: %s\n" +
-    "El valor minimo de height exceptuando 0 es: %s\n" +
-    "El valor maximo de height es %s\n",
+  printf("\nEl promedio de best_of es: %s\n" +
+    "El valor minimo de best_of contando 0 es: %s\n" +
+    "El valor minimo de best_of exceptuando 0 es: %s\n" +
+    "El valor maximo de best_of es %s\n",
     prombest, min0best, minbest, maxbest)
 
   val minutes = data
@@ -95,10 +95,10 @@ object ParcialPF extends App {
   val promMin = minutes.sum.toDouble / minutes.size
   val maxMin = minutes.max
 
-  printf("\nEl promedio de height es: %s\n" +
-    "El valor minimo de height contando 0 es: %s\n" +
-    "El valor minimo de height exceptuando 0 es: %s\n" +
-    "El valor maximo de height es %s\n",
+  printf("\nEl promedio de minutes es: %s\n" +
+    "El valor minimo de minutes contando 0 es: %s\n" +
+    "El valor minimo de minutes exceptuando 0 es: %s\n" +
+    "El valor maximo de minutes es %s\n",
     promMin, min0Min, minMin, maxMin)
 
   val histoheight = height.map(_.toDouble)
@@ -162,9 +162,7 @@ object ParcialPF extends App {
     .groupBy(identity)
     .map {
     case x => (x._1, x._2.size)
-  }.toList.max
-
-  println(players_name)
+  }.toList.maxBy(_._2)
 
   val players_age = data
     .flatMap(row => row.get("players_info"))
