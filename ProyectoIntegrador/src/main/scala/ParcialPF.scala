@@ -163,11 +163,11 @@ object ParcialPF extends App {
     .groupBy(identity)
     .map {
       case x => (x._1, x._2.size)
-    }.toList.maxBy(_._2)._1.toString
+    }.toList.maxBy(_._2)._1
 
   val names = data
     .map(row => (row("tourney_name"), row("players_info")))
-    .filter(_._2.contains(max_height))
+    .filter(_._2.contains(max_height.toString))
     .map(x => x._2)
     .distinct
     .map(row => Json.parse(row))
@@ -176,13 +176,13 @@ object ParcialPF extends App {
 
   val tourneys_name = data
     .map(row => (row("tourney_name"), row("players_info")))
-    .filter(_._2.contains(max_height))
+    .filter(_._2.contains(max_height.toString))
     .map(x => x._1)
     .distinct
 
   val ages = data
     .map(row => (row("tourney_name"), row("players_info")))
-    .filter(_._2.contains(max_height))
+    .filter(_._2.contains(max_height.toString))
     .map(x => x._2)
     .distinct
     .map(row => Json.parse(row))
