@@ -17,6 +17,7 @@ object ParcialPF extends App {
   reader.close()
 
   val tournaments = data.flatMap(elem => elem.get("tourney_id")).distinct.size
+  println("El numero total de torneos es: " + tournaments)
   /*
   val tournaments1 = data.flatMap(elem => elem.get("tourney_name")).groupBy(x => x.split(":")(0))
     . map {
@@ -26,6 +27,7 @@ object ParcialPF extends App {
 
    */
   val tournamentName = data.flatMap(elem => elem.get("tourney_name")).distinct
+  println("Los nombres de los torneos son: \n" + tournamentName)
 
   //Análisis Exploratorios
   //Numericos
@@ -149,44 +151,48 @@ object ParcialPF extends App {
     .render()
     .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\BarchartHand.png"))
 
-  //Pregunta: COMO SE LLAMABAN LOS JUGADORES QUE PARTICIPARON EN EL
-  //TORNEO  "Roland Garros "Y QUE EDAD TENIAN?
+  /* Pregunta: Cual es el nombre y edad de los jugador con mayor altura y en que torenos partciparon
+   */
 
-  val tourney_name = data.flatMap(elem => elem.get("tourney_name"))
-
-  val players_name = data
+  val max_height = data
     .flatMap(row => row.get("players_info"))
+    .map(row => Json.parse(row))
+    .flatMap(JsonData => JsonData \\ "height")
+    .map(jsValue => jsValue.asOpt[Int].getOrElse(0))
+    .filter(_ != 0)
+    .groupBy(identity)
+    .map {
+      case x => (x._1, x._2.size)
+    }.toList.maxBy(_._2)._1.toString
+
+  val names = data
+    .map(row => (row("tourney_name"), row("players_info")))
+    .filter(_._2.contains(max_height))
+    .map(x => x._2)
+    .distinct
     .map(row => Json.parse(row))
     .flatMap(JsonData => JsonData \\ "name")
     .map(jsValue => jsValue.as[String])
-    .groupBy(identity)
-    .map {
-    case x => (x._1, x._2.size)
-  }.toList.maxBy(_._2)
 
-  val players_age = data
-    .flatMap(row => row.get("players_info"))
+  val tourneys_name = data
+    .map(row => (row("tourney_name"), row("players_info")))
+    .filter(_._2.contains(max_height))
+    .map(x => x._1)
+    .distinct
+
+  val ages = data
+    .map(row => (row("tourney_name"), row("players_info")))
+    .filter(_._2.contains(max_height))
+    .map(x => x._2)
+    .distinct
     .map(row => Json.parse(row))
     .flatMap(JsonData => JsonData \\ "age")
-    .map(jsValue => jsValue.asOpt[Double].getOrElse(0.0))
+    .map(jsValue => jsValue.asOpt[Int].getOrElse(0))
 
-  val tuple = (tourney_name, players_name, players_age)
-
-  /*val filteredTuple = tuple match {
-    case tupla if tupla._1.equals("Roland Garros") => (tupla._2, tupla._3)
+  val players_Height = names.zip(ages).zip(tourneys_name).map {
+    case ((names, ages), tourtney_name) => (names, ages, tourtney_name)
   }
 
-   */
-
- 
-
-
-
-
-
-
-
-
-
+  println(players_Height)
 
 }
