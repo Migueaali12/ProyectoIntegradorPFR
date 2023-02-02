@@ -1,5 +1,4 @@
 import com.github.tototoshi.csv._
-
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -30,7 +29,7 @@ object CStats extends App {
     .yAxis()
     .xbounds(yearReleaseList.min, yearReleaseList.max)
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\histoYearReleaseDate.png"))
+    .write(new File("CodeStats\\histoYearReleaseDate.png"))
 
   val productionCompanies = data
     .flatMap(row => row.get("production_companies"))
@@ -51,7 +50,7 @@ object CStats extends App {
     .yLabel("Productions")
     .bottomLegend()
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\BarchartProductionCompanies.png"))
+    .write(new File("CodeStats\\BarchartProductionCompanies.png"))
 
   //Datos numericos
 
@@ -63,7 +62,7 @@ object CStats extends App {
     .yAxis()
     .xbounds(budget.min, budget.max)
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\histogramBudget.png"))
+    .write(new File("CodeStats\\histogramBudget.png"))
 
   val popularity = data.flatMap(elem => elem.get("popularity")).map(_.toDouble)
 
@@ -73,7 +72,7 @@ object CStats extends App {
     .yAxis()
     .xbounds(popularity.min, popularity.max)
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\histogramPopularity.png"))
+    .write(new File("CodeStats\\histogramPopularity.png"))
 
   val revenue = data.flatMap(elem => elem.get("revenue")).map(_.toDouble)
 
@@ -83,7 +82,7 @@ object CStats extends App {
     .yAxis()
     .xbounds(revenue.min, revenue.max)
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\histogramRevenue.png"))
+    .write(new File("CodeStats\\histogramRevenue.png"))
 
   var runtime = data.flatMap(elem => elem.get("runtime")).filter(_.isEmpty != true)
   val runtime0 = runtime.filter(_.isEmpty == true).map(_ => "0")
@@ -96,7 +95,7 @@ object CStats extends App {
     .yAxis()
     .xbounds(runtime1.min, runtime1.max)
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\histogramRuntime.png"))
+    .write(new File("CodeStats\\histogramRuntime.png"))
 
   val vote_average = data.flatMap(elem => elem.get("vote_average")).map(_.toDouble)
 
@@ -106,7 +105,7 @@ object CStats extends App {
     .yAxis()
     .xbounds(vote_average.min, vote_average.max)
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\histogramVote_average.png"))
+    .write(new File("CodeStats\\histogramVote_average.png"))
 
   val vote_count = data.flatMap(elem => elem.get("vote_count")).map(_.toDouble)
 
@@ -116,7 +115,7 @@ object CStats extends App {
     .yAxis()
     .xbounds(vote_count.min, vote_count.max)
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\histogramVote_count.png"))
+    .write(new File("CodeStats\\histogramVote_count.png"))
 
   //Datos tipo cadena
 
@@ -134,7 +133,7 @@ object CStats extends App {
     .frame()
     .bottomLegend()
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\BarchartGenres.png"))
+    .write(new File("CodeStats\\BarchartGenres.png"))
 
   val release_date = data.flatMap(x => x.get("release_date"))
     .groupBy(identity)
@@ -150,7 +149,7 @@ object CStats extends App {
     .frame()
     .bottomLegend()
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\BarchartRelease_date.png"))
+    .write(new File("CodeStats\\BarchartRelease_date.png"))
 
   val status = data.flatMap(x => x.get("status"))
     .groupBy(identity)
@@ -166,7 +165,7 @@ object CStats extends App {
     .frame()
     .bottomLegend()
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\BarchartStatus.png"))
+    .write(new File("CodeStats\\BarchartStatus.png"))
 
   val title = data.flatMap(x => x.get("title"))
     .groupBy(identity)
@@ -182,7 +181,7 @@ object CStats extends App {
     .frame()
     .bottomLegend()
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\BarcharTitle.png"))
+    .write(new File("CodeStats\\BarcharTitle.png"))
 
   val director = data.flatMap(x => x.get("director"))
     .groupBy(identity)
@@ -195,6 +194,6 @@ object CStats extends App {
   PieChart(director.take(8))
     .rightLegend()
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\PieChartDirector.png"))
+    .write(new File("CodeStats\\PieChartDirector.png"))
 
 }
