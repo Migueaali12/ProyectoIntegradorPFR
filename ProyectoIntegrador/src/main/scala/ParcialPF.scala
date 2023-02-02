@@ -163,37 +163,72 @@ object ParcialPF extends App {
     .groupBy(identity)
     .map {
       case x => (x._1, x._2.size)
-    }.toList.maxBy(_._2)._1 //altura más alta
+    }.toList.maxBy(_._1)._1.toString //altura más alta
+
+  val players_info = data
+    .flatMap(row => row.get("players_info"))
+    .map(row => Json.parse(row))
 
   val names = data
-    .map(row => (row("tourney_name"), row("players_info")))
-    .filter(_._2.contains(max_height.toString))
-    .map(x => x._2)
-    .distinct
+    .flatMap(row => row.get("players_info"))
     .map(row => Json.parse(row))
     .flatMap(JsonData => JsonData \\ "name")
-    .map(jsValue => jsValue.as[String]) //nombres de jugadores más altos
-
-  val tourneys_name = data
-    .map(row => (row("tourney_name"), row("players_info")))
-    .filter(_._2.contains(max_height.toString))
-    .map(x => x._1)
-    .distinct //lista de nombres de torneos
+    .map(jsValue => jsValue.as[String])
 
   val ages = data
-    .map(row => (row("tourney_name"), row("players_info")))
-    .filter(_._2.contains(max_height.toString))
-    .map(x => x._2)
-    .distinct
+    .flatMap(row => row.get("players_info"))
     .map(row => Json.parse(row))
     .flatMap(JsonData => JsonData \\ "age")
+    .map(jsValue => jsValue.asOpt[Double].getOrElse(0.0))
+
+  val height1 = data
+    .flatMap(row => row.get("players_info"))
+    .map(row => Json.parse(row))
+    .flatMap(JsonData => JsonData \\ "height")
     .map(jsValue => jsValue.asOpt[Int].getOrElse(0))
-    .filter(_ != 0) //separar los valores nulos
 
-  val players_Height = names.zip(ages).zip(tourneys_name).map {
-    case ((names, ages), tourtney_name) => (names, ages, tourtney_name)
-  }
+  val players = names.zip(ages).zip(height1).map {
+    case ((name, age), height) => Json.obj("name" -> name, "age" -> age, "height" -> height)
+  }.toString()
 
-  println(players_Height)
+  /*
 
+  val filteredPlayers = data
+    .map(row => (row("tourney_name"), players))
+    .filter(_._2.contains(max_height))
+    .map(x => x._2)
+
+  val filteredTNames = data
+    .map(row => (row("tourney_name"), players))
+    .filter(_._2.contains(max_height))
+    .map(x => x._1)
+
+  val names1 = filteredPlayers
+    .map(row => Json.parse(row))
+    .flatMap(JsonData => JsonData \\ "name")
+    .map(jsValue => jsValue.as[String])
+
+  println(names1)
+
+  val ages1 = filteredPlayers
+    .map(row => Json.parse(row))
+    .flatMap(JsonData => JsonData \\ "age")
+    .map(jsValue => jsValue.as[Double])
+
+  val height2 = filteredPlayers
+    .map(row => Json.parse(row))
+    .flatMap(JsonData => JsonData \\ "height")
+    .map(jsValue => jsValue.as[Int])
+
+  val ziped_players = names1.zip(ages1).zip(height2).zip(filteredTNames)
+    .map {
+      case (((names1, ages1) ,height2), filteredTNames) => (names1, ages1, height2, filteredTNames)
+    }
+
+  val final_players = ziped_players
+    .filter(x => x._3 == maxheight.toDouble)
+    .map(x => (x._1, x._2, x._3, x._4))
+
+
+   */
 }

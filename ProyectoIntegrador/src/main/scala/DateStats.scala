@@ -160,9 +160,9 @@ object DateStats extends App {
     .sortBy(_._2)
     .reverse
 
-  BarChart(status.take(10).map(_._2).map(_.toDouble))
+  BarChart(status.map(_._2).map(_.toDouble))
     .title("status")
-    .xAxis(status.take(10).map(_._1))
+    .xAxis(status.map(_._1))
     .yAxis()
     .frame()
     .bottomLegend()
@@ -176,7 +176,7 @@ object DateStats extends App {
     .sortBy(_._2)
     .reverse
 
-  BarChart(title.take(10).map(_._2).map(_.toDouble))
+  BarChart(title.take(5).map(_._2).map(_.toDouble))
     .title("title")
     .xAxis(title.take(10).map(_._1))
     .yAxis()
