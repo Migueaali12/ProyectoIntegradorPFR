@@ -10,49 +10,24 @@ object CrewFix extends App {
   val data = reader.allWithHeaders()
   reader.close()
 
-  def replacePattern(original: String): String = {
-    var txtOr = original
-    val pattern: Regex = "(\\s\"(.*?)\",)".r
-    for (m <- pattern.findAllIn(original)) {
-      val textOriginal = m
-      val replacementText = m.replace("'", "-u0027")
-      txtOr = txtOr.replace(textOriginal, replacementText)
-    }
-    txtOr
-  }
-
-  def replacePattern2(original: String): String = {
-    var txtOr = original
-    val pattern: Regex = "([a-z]\\s\"(.*?)\"\\s*[A-Z])".r
-    for (m <- pattern.findAllIn(original)) {
-      val textOriginal = m
-      val replacementText = m.replace("\"", "-u0022")
-      txtOr = txtOr.replace(textOriginal, replacementText)
-    }
-    txtOr
-  }
-
-  def replacePattern3(original: String): String = {
-    var txtOr = original
-    val pattern: Regex = "(:\\s'\"(.*?)',)".r
-    for (m <- pattern.findAllIn(original)) {
-      val textOriginal = m
-      val replacementText = m.replace("\"", "-u0022")
-      txtOr = txtOr.replace(textOriginal, replacementText)
-    }
-    txtOr
-  }
-
   val crew = data
     .map(row => row("crew"))
-    .map(replacePattern2)
-    .map(replacePattern)
-    .map(replacePattern3)
+    .map(replacePatternUltimate)
     .map(text => text.replace("'", "\""))
     .map(text => text.replace("-u0027", "'"))
     .map(text => text.replace("-u0022", "\\\""))
     .map(text => Try(Json.parse(text)))
     .filter(_.isSuccess)
-    .size
+
+  def replacePatternUltimate(original: String) = {
+    var txtOr = original
+    val pattern1: Regex = "([a-z]\\s\"(.*?)\"\\s*[A-Z])".r
+    txtOr = pattern1.replaceAllIn(txtOr, m => m.toString.replace("\"", "-u0022"))
+    val pattern2: Regex = "(\\s\"(.*?)\",)".r
+    txtOr = pattern2.replaceAllIn(txtOr, m => m.toString.replace("'", "-u0027"))
+    val pattern3: Regex = "(:\\s'\"(.*?)',)".r
+    txtOr = pattern3.replaceAllIn(txtOr, m => m.toString.replace("\"", "-u0022"))
+    txtOr
+  }
 
 }

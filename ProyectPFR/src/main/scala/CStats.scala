@@ -1,14 +1,16 @@
 import com.github.tototoshi.csv._
+
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import com.cibo.evilplot.plot._
 import com.cibo.evilplot.plot.aesthetics.DefaultTheme.{DefaultElements, DefaultTheme}
+import com.cibo.evilplot.plot.aesthetics.Theme
 import play.api.libs.json.Json
 
 object CStats extends App {
 
-  implicit val theme = DefaultTheme.copy(
+  implicit val theme: Theme = DefaultTheme.copy(
     elements = DefaultElements.copy(categoricalXAxisLabelOrientation = 45)
   )
 
@@ -23,12 +25,12 @@ object CStats extends App {
   val yearReleaseList = releaseDateList.map(_.getYear).map(_.toDouble)
 
   Histogram(yearReleaseList)
-    .title("Años de lanzamiento")
+    .title("release_date")
     .xAxis()
     .yAxis()
-    .xbounds(1916.0, 2018.0)
+    .xbounds(yearReleaseList.min, yearReleaseList.max)
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\histoYear.png"))
+    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\histoYearReleaseDate.png"))
 
   val productionCompanies = data
     .flatMap(row => row.get("production_companies"))
@@ -41,18 +43,15 @@ object CStats extends App {
     .sortBy(_._2)
     .reverse
 
-  val pCompaniesValues = productionCompanies.take(10).map(_._2).map(_.toDouble)
-  val pCompanieLables = productionCompanies.take(10).map(_._1)
-
-  BarChart(pCompaniesValues)
+  BarChart(productionCompanies.take(10).map(_._2).map(_.toDouble))
     .title("Compañias Productoras")
-    .xAxis(pCompanieLables)
+    .xAxis(productionCompanies.take(10).map(_._1))
     .yAxis()
     .frame()
     .yLabel("Productions")
     .bottomLegend()
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\Barchart.png"))
+    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\BarchartProductionCompanies.png"))
 
   //Datos numericos
 
@@ -178,7 +177,7 @@ object CStats extends App {
 
   BarChart(title.take(5).map(_._2).map(_.toDouble))
     .title("title")
-    .xAxis(title.take(10).map(_._1))
+    .xAxis(title.take(5).map(_._1))
     .yAxis()
     .frame()
     .bottomLegend()
@@ -187,18 +186,15 @@ object CStats extends App {
 
   val director = data.flatMap(x => x.get("director"))
     .groupBy(identity)
-    .map { case (keyword, lista) => (keyword, lista.size) }
-    .toList
+    .map { case (keyword, lista) => (keyword, lista.size.toDouble) }
+    .toSeq
+    .filter(x => x._1.nonEmpty)
     .sortBy(_._2)
     .reverse
 
-  BarChart(director.take(10).map(_._2).map(_.toDouble))
-    .title("director")
-    .xAxis(director.take(10).map(_._1))
-    .yAxis()
-    .frame()
-    .bottomLegend()
+  PieChart(director.take(8))
+    .rightLegend()
     .render()
-    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\BarchartDirector.png"))
+    .write(new File("C:\\Users\\Miguel Alvarez\\CodeStats\\PieChartDirector.png"))
 
 }
