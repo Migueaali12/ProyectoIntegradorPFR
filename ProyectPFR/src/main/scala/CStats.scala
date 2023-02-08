@@ -6,6 +6,7 @@ import com.cibo.evilplot.plot._
 import com.cibo.evilplot.plot.aesthetics.DefaultTheme.{DefaultElements, DefaultTheme}
 import com.cibo.evilplot.plot.aesthetics.Theme
 import play.api.libs.json.Json
+import scala.math._
 
 object CStats extends App {
 
@@ -54,68 +55,72 @@ object CStats extends App {
 
   //Datos numericos
 
-  val budget = data.flatMap(row => row.get("budget")).map(_.toDouble)
+  val budget = data.map(x => (x("original_title"), x("budget").toDouble))
 
-  Histogram(budget)
-    .title("Budget")
-    .xAxis()
+  BarChart(budget.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(x => log(x._2)))
+    .title("budget")
+    .xAxis(budget.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._1))
     .yAxis()
-    .xbounds(budget.min, budget.max)
+    .frame()
+    .bottomLegend()
     .render()
-    .write(new File("CodeStats\\histogramBudget.png"))
+    .write(new File("CodeStats\\BarchartBudget.png"))
 
-  val popularity = data.flatMap(elem => elem.get("popularity")).map(_.toDouble)
+  val popularity = data.map(x => (x("original_title"), x("popularity").toDouble))
 
-  Histogram(popularity)
+  BarChart(popularity.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(x => log(x._2)))
     .title("popularity")
-    .xAxis()
+    .xAxis(popularity.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._1))
     .yAxis()
-    .xbounds(popularity.min, popularity.max)
+    .frame()
+    .bottomLegend()
     .render()
-    .write(new File("CodeStats\\histogramPopularity.png"))
+    .write(new File("CodeStats\\BarchartPopularity.png"))
 
-  val revenue = data.flatMap(elem => elem.get("revenue")).map(_.toDouble)
+  val revenue = data.map(x => (x("original_title"), x("revenue").toDouble))
 
-  Histogram(revenue)
+  BarChart(revenue.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._2))
     .title("revenue")
-    .xAxis()
+    .xAxis(revenue.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._1))
     .yAxis()
-    .xbounds(revenue.min, revenue.max)
+    .frame()
+    .bottomLegend()
     .render()
-    .write(new File("CodeStats\\histogramRevenue.png"))
+    .write(new File("CodeStats\\BarchartRevenue.png"))
 
-  var runtime = data.flatMap(elem => elem.get("runtime")).filter(_.isEmpty != true)
-  val runtime0 = runtime.filter(_.isEmpty == true).map(_ => "0")
-  runtime = runtime ++ runtime0
-  val runtime1 = runtime.map(_.toDouble)
+  val runtime = data.map(x => (x("original_title"), x("runtime")))
+  val filteredRuntime = runtime.filter(_._2.nonEmpty).map(x => (x._1, x._2.toDouble))
 
-  Histogram(runtime1)
+  BarChart(filteredRuntime.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._2))
     .title("runtime")
-    .xAxis()
+    .xAxis(filteredRuntime.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._1))
     .yAxis()
-    .xbounds(runtime1.min, runtime1.max)
+    .frame()
+    .bottomLegend()
     .render()
-    .write(new File("CodeStats\\histogramRuntime.png"))
+    .write(new File("CodeStats\\BarchartRuntime.png"))
 
-  val vote_average = data.flatMap(elem => elem.get("vote_average")).map(_.toDouble)
+  val vote_average = data.map(x => (x("original_title"), x("vote_average").toDouble))
 
-  Histogram(vote_average)
+  BarChart(vote_average.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._2))
     .title("vote_average")
-    .xAxis()
+    .xAxis(vote_average.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._1))
     .yAxis()
-    .xbounds(vote_average.min, vote_average.max)
+    .frame()
+    .bottomLegend()
     .render()
-    .write(new File("CodeStats\\histogramVote_average.png"))
+    .write(new File("CodeStats\\BarchartVote_avrg.png"))
 
-  val vote_count = data.flatMap(elem => elem.get("vote_count")).map(_.toDouble)
+  val vote_count = data.map(x => (x("original_title"), x("vote_count").toDouble))
 
-  Histogram(vote_count)
+  BarChart(vote_count.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._2))
     .title("vote_count")
-    .xAxis()
+    .xAxis(vote_count.sortWith((x1, x2) => x1._2 > x2._2).take(10).map(_._1))
     .yAxis()
-    .xbounds(vote_count.min, vote_count.max)
+    .frame()
+    .bottomLegend()
     .render()
-    .write(new File("CodeStats\\histogramVote_count.png"))
+    .write(new File("CodeStats\\BarchartVoteCount.png"))
 
   //Datos tipo cadena
 
@@ -137,14 +142,14 @@ object CStats extends App {
 
   val release_date = data.flatMap(x => x.get("release_date"))
     .groupBy(identity)
-    .map { case (keyword, lista) => (keyword, lista.size) }
+    .map { case (keyword, lista) => (keyword, log(lista.size)) }
     .toList
     .sortBy(_._2)
     .reverse
 
-  BarChart(release_date.take(10).map(_._2).map(_.toDouble))
+  BarChart(release_date.take(7).map(_._2).map(_.toDouble))
     .title("release_date")
-    .xAxis(release_date.take(10).map(_._1))
+    .xAxis(release_date.take(7).map(_._1))
     .yAxis()
     .frame()
     .bottomLegend()
@@ -153,7 +158,7 @@ object CStats extends App {
 
   val status = data.flatMap(x => x.get("status"))
     .groupBy(identity)
-    .map { case (keyword, lista) => (keyword, lista.size) }
+    .map { case (keyword, lista) => (keyword, log(lista.size)) }
     .toList
     .sortBy(_._2)
     .reverse
@@ -169,31 +174,51 @@ object CStats extends App {
 
   val title = data.flatMap(x => x.get("title"))
     .groupBy(identity)
-    .map { case (keyword, lista) => (keyword, lista.size) }
+    .map { case (keyword, lista) => (keyword, lista.size.toDouble) }
+    .toSeq
+    .sortBy(_._2)
+    .reverse
+
+  PieChart(title.take(3))
+    .title("title")
+    .rightLegend()
+    .render()
+    .write(new File("CodeStats\\PieChartTitle.png"))
+
+  val director = data.flatMap(x => x.get("director"))
+    .groupBy(identity)
+    .map { case (keyword, lista) => (keyword, log(lista.size)) }
+    .filter(x => x._1.nonEmpty)
     .toList
     .sortBy(_._2)
     .reverse
 
-  BarChart(title.take(5).map(_._2).map(_.toDouble))
-    .title("title")
-    .xAxis(title.take(5).map(_._1))
+  BarChart(director.take(8).map(_._2))
+    .title("director")
+    .xAxis(director.take(8).map(_._1))
     .yAxis()
     .frame()
     .bottomLegend()
     .render()
-    .write(new File("CodeStats\\BarcharTitle.png"))
+    .write(new File("CodeStats\\BarcharDirector.png"))
 
-  val director = data.flatMap(x => x.get("director"))
+  val spoken_languaje = data
+    .flatMap(row => row.get("spoken_languages"))
+    .map(row => Json.parse(row))
+    .flatMap(JsonData => JsonData \\ "name")
+    .map(jsValue => jsValue.as[String])
     .groupBy(identity)
-    .map { case (keyword, lista) => (keyword, lista.size.toDouble) }
+    .map { case (keyword, lista) => (keyword, log(lista.size)) }
     .toSeq
-    .filter(x => x._1.nonEmpty)
     .sortBy(_._2)
     .reverse
 
-  PieChart(director.take(8))
+  PieChart(spoken_languaje.take(5))
+    .title("spoken_languaje")
     .rightLegend()
     .render()
-    .write(new File("CodeStats\\PieChartDirector.png"))
+    .write(new File("CodeStats\\PieChartSpokenLanguage.png"))
+
+
 
 }

@@ -19,6 +19,8 @@ object CrewFix extends App {
     .map(text => Try(Json.parse(text)))
     .filter(_.isSuccess)
 
+  println(crew)
+
   def replacePatternUltimate(original: String) = {
     var txtOr = original
     val pattern1: Regex = "([a-z]\\s\"(.*?)\"\\s*[A-Z])".r

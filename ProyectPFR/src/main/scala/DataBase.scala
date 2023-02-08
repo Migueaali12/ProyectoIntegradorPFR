@@ -1,8 +1,8 @@
 import com.github.tototoshi.csv.CSVReader
 import scalikejdbc._
 import play.api.libs.json.{JsArray, Json}
+import scala.util.{Failure, Success, Try}
 import requests.Response
-
 import java.io.File
 
 object DataBase extends App {
@@ -12,7 +12,7 @@ object DataBase extends App {
   reader.close()
 
   Class.forName("com.mysql.cj.jdbc.Driver")
-  ConnectionPool.singleton("jdbc:mysql//localhost:3306/pintegrador","root","1234")
+  ConnectionPool.singleton("jdbc:mysql://localhost:3306/taller","root","Rootsql")
   implicit val session: DBSession = AutoSession
 
   def actorsNames(dataRaw: String): Option[String] = {
@@ -29,5 +29,38 @@ object DataBase extends App {
     } else
       Option.empty
   }
+
+  val cast = data
+    .map(row => row("cast"))
+    .filter(_.nonEmpty)
+    .map(StringContext.processEscapes)
+    .take(10)
+    .map(actorsNames)
+    .map(json => Try(Json.parse(json.get)))
+    .filter(_.isSuccess)
+    .map(_.get)
+    .flatMap(json => json("entity_list").as[JsArray].value)
+    .map(_ ("form"))
+    .map(data => data.as[String])
+    .distinct
+
+/*
+  cast.foreach(x =>sql"""
+    INSERT INTO elenco
+    VALUES
+    (${x})
+      """
+    .stripMargin
+    .update
+    .apply()
+  )
+
+ */
+
+  val entities = sql"SELECT * FROM elenco WHERE(Nombres = 'Daniel Craig') "
+    .map(_.toMap())
+    .list.apply()
+
+  entities.foreach(x => println(x))
 
 }

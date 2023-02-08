@@ -9,7 +9,7 @@ object CStrings extends App {
 
   //genres
   val genres = data.flatMap(x => x.get("genres"))
-    .groupBy(genre => genre)
+    .groupBy(identity)
     .map(x => (x._1, x._2.size))
 
   printf("Los generos son: %s\n" +
@@ -20,7 +20,7 @@ object CStrings extends App {
 
   //release_date
   val release_date = data.flatMap(x => x.get("release_date"))
-    .groupBy(date => date)
+    .groupBy(identity)
     .map(x => (x._1, x._2.size))
 
   printf("\nLas fechas de salida son: %s\n" +
@@ -31,7 +31,7 @@ object CStrings extends App {
 
   //status
   val status = data.flatMap(x => x.get("status"))
-    .groupBy(status => status)
+    .groupBy(identity)
     .map(x => (x._1, x._2.size))
 
   printf("\nLos estados de las películas son: %s\n" +
@@ -42,7 +42,7 @@ object CStrings extends App {
 
   //title
   val title = data.flatMap(x => x.get("title"))
-    .groupBy(title => title)
+    .groupBy(identity)
     .map(x => (x._1, x._2.size))
 
   printf("\nLos titulos de las películas son: %s\n" +
@@ -53,7 +53,8 @@ object CStrings extends App {
 
   //director
   val director = data.flatMap(x => x.get("director"))
-    .groupBy(director => director)
+    .filter(_.nonEmpty)
+    .groupBy(identity)
     .map(x => (x._1, x._2.size))
 
   printf("\nLos directores de las películas son: %s\n" +
